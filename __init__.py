@@ -98,28 +98,28 @@ def reflection_matrix(point, normal):
 #     raise NotImplementedError()
 
 
-def batch_matmul(A, x, x_axis=-1):
+def batch_matmul(A, B):
     """
-    Perform matrix multiplication A*x for independent rows in a batch.
+    Perform matrix multiplication A*B for independent rows in a batch.
 
-    If A.shape == X + [n, m], then x.shape == X + [m] + Y and the returned
-    tensor b will satisfy b.shape == X + [n] + Y
+    If A.shape == X + [n, m], then B.shape == X + [m] + Y and the returned
+    tensor C will satisfy C.shape == X + [n] + Y.
     """
     # X = A.shape[:-2]
     # n = A.shape[-2]
     # m = A.shape[-1]
-    if x_axis < 0:
-        x_axis += len(x.shape)
-    # if not (x.shape[:x_axis] == X):
-    #     raise IndexError('%s, %s. %s' % (str(A.shape), str(x.shape), x_axis))
-    # if not (x.shape[x_axis] == m):
-    #     raise IndexError('%s, %s. %s' % (str(A.shape), str(x.shape), x_axis))
-    Y = x.shape[x_axis+1:]
+    X = A.shape[:-2]
+    nx = len(X)
+    m = A.shape[-1]
+    Y = B.shape[nx + 1:]
+
+    if B.shape[nx] not in [m, 1]:
+        raise IndexError()
     for i in range(len(Y)):
         A = tf.expand_dims(A, axis=-1)
-    x = tf.expand_dims(x, axis=x_axis)
-    b = tf.reduce_sum(A*x, axis=x_axis+1)
-    return b
+    B = tf.expand_dims(B, nx)
+    C = tf.reduce_sum(A*B, axis=nx+1)
+    return C
 
 
 def rotation_matrix_nh(angle, direction):
