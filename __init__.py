@@ -98,27 +98,28 @@ def reflection_matrix(point, normal):
 #     raise NotImplementedError()
 
 
-def batch_matmul(A, B):
+def batch_matmul(A, B, scope='batch_matmul'):
     """
     Perform matrix multiplication A*B for independent rows in a batch.
 
     If A.shape == X + [n, m], then B.shape == X + [m] + Y and the returned
     tensor C will satisfy C.shape == X + [n] + Y.
     """
-    # X = A.shape[:-2]
-    # n = A.shape[-2]
-    # m = A.shape[-1]
-    X = A.shape[:-2]
-    nx = len(X)
-    m = A.shape[-1]
-    Y = B.shape[nx + 1:]
+    with tf.variable_scope(scope):
+        # X = A.shape[:-2]
+        # n = A.shape[-2]
+        # m = A.shape[-1]
+        X = A.shape[:-2]
+        nx = len(X)
+        m = A.shape[-1]
+        Y = B.shape[nx + 1:]
 
-    if B.shape[nx] not in [m, 1]:
-        raise IndexError()
-    for i in range(len(Y)):
-        A = tf.expand_dims(A, axis=-1)
-    B = tf.expand_dims(B, nx)
-    C = tf.reduce_sum(A*B, axis=nx+1)
+        if B.shape[nx] not in [m, 1]:
+            raise IndexError()
+        for i in range(len(Y)):
+            A = tf.expand_dims(A, axis=-1)
+        B = tf.expand_dims(B, nx)
+        C = tf.reduce_sum(A*B, axis=nx+1)
     return C
 
 
