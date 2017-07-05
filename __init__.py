@@ -105,7 +105,7 @@ def batch_matmul(A, B, scope='batch_matmul'):
     If A.shape == X + [n, m], then B.shape == X + [m] + Y and the returned
     tensor C will satisfy C.shape == X + [n] + Y.
     """
-    with tf.variable_scope(scope):
+    with tf.name_scope(scope):
         # X = A.shape[:-2]
         # n = A.shape[-2]
         # m = A.shape[-1]
